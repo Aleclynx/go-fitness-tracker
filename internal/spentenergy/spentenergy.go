@@ -5,17 +5,15 @@ import (
 	"time"
 )
 
-// Основные константы, необходимые для расчетов.
 const (
-	mInKm                      = 1000 // количество метров в километре.
-	minInH                     = 60   // количество минут в часе.
-	stepLengthCoefficient      = 0.45 // коэффициент для расчета длины шага на основе роста.
-	walkingCaloriesCoefficient = 0.5  // коэффициент для расчета калорий при ходьбе.
+	mInKm                      = 1000
+	minInH                     = 60
+	stepLengthCoefficient      = 0.45
+	walkingCaloriesCoefficient = 0.5
 )
 
-// WalkingSpentCalories вычисляет количество калорий, потраченных при ходьбе.
+// WalkingSpentCalories — калории при ходьбе
 func WalkingSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
-	// Проверяем, что все параметры имеют смысл.
 	if steps <= 0 || weight <= 0 || height <= 0 || duration <= 0 {
 		return 0, errors.New("некорректные параметры для расчета калорий при ходьбе")
 	}
@@ -23,14 +21,13 @@ func WalkingSpentCalories(steps int, weight, height float64, duration time.Durat
 	meanSpeed := MeanSpeed(steps, height, duration)
 	durationInMinutes := duration.Minutes()
 
-	// Базовая формула калорий.
 	calories := (weight * meanSpeed * durationInMinutes) / minInH
 
-	// Для ходьбы применяем корректирующий коэффициент.
+	// для ходьбы множим на коэффицент
 	return calories * walkingCaloriesCoefficient, nil
 }
 
-// RunningSpentCalories вычисляет количество калорий, потраченных при беге.
+// RunningSpentCalories — калории при беге
 func RunningSpentCalories(steps int, weight, height float64, duration time.Duration) (float64, error) {
 	if steps <= 0 || weight <= 0 || height <= 0 || duration <= 0 {
 		return 0, errors.New("некорректные параметры для расчета калорий при беге")
@@ -43,22 +40,19 @@ func RunningSpentCalories(steps int, weight, height float64, duration time.Durat
 	return calories, nil
 }
 
-// MeanSpeed вычисляет среднюю скорость в км/ч.
+// MeanSpeed — средняя скорость в км/ч
 func MeanSpeed(steps int, height float64, duration time.Duration) float64 {
-	// Если продолжительность не положительная или шаги отрицательные — скорость 0.
 	if duration <= 0 || steps < 0 {
 		return 0
 	}
+
 	dist := Distance(steps, height)
 	return dist / duration.Hours()
 }
 
-// Distance вычисляет дистанцию в километрах.
+// Distance — сколько км прошел
 func Distance(steps int, height float64) float64 {
-	// Длина шага зависит от роста.
 	stepLength := height * stepLengthCoefficient
-	// Общая длина в метрах.
 	distanceInMeters := float64(steps) * stepLength
-	// Переводим в километры.
 	return distanceInMeters / mInKm
 }

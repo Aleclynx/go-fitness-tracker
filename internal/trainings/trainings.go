@@ -11,7 +11,7 @@ import (
 	"github.com/Yandex-Practicum/tracker/internal/spentenergy"
 )
 
-// Training хранит данные о тренировке.
+// Training — данные о тренировке
 type Training struct {
 	Steps        int
 	TrainingType string
@@ -19,22 +19,23 @@ type Training struct {
 	personaldata.Personal
 }
 
-// Parse парсит строку с данными о тренировке.
-func (t *Training) Parse(datastring string) (err error) {
+// Parse — разбираем строку с тренировкой
+func (t *Training) Parse(datastring string) error {
 	parts := strings.Split(datastring, ",")
 	if len(parts) != 3 {
 		return errors.New("неверный формат строки тренировки")
 	}
 
-	steps, err := strconv.Atoi(parts[0])
+	// убираем пробелы если есть
+	steps, err := strconv.Atoi(strings.TrimSpace(parts[0]))
 	if err != nil || steps <= 0 {
 		return errors.New("некорректное количество шагов")
 	}
 	t.Steps = steps
 
-	t.TrainingType = parts[1]
+	t.TrainingType = strings.TrimSpace(parts[1])
 
-	duration, err := time.ParseDuration(parts[2])
+	duration, err := time.ParseDuration(strings.TrimSpace(parts[2]))
 	if err != nil || duration <= 0 {
 		return errors.New("некорректная продолжительность тренировки")
 	}
@@ -43,7 +44,7 @@ func (t *Training) Parse(datastring string) (err error) {
 	return nil
 }
 
-// ActionInfo формирует строку с информацией о тренировке.
+// ActionInfo — собираем строку с информацией о тренировке
 func (t Training) ActionInfo() (string, error) {
 	distance := spentenergy.Distance(t.Steps, t.Height)
 	meanSpeed := spentenergy.MeanSpeed(t.Steps, t.Height, t.Duration)

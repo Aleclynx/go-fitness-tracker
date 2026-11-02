@@ -5,13 +5,13 @@ import (
 	"log"
 )
 
-// DataParser — интерфейс, который реализуют структуры Training и DaySteps.
+// DataParser — интерфейс для парсинга и вывода информации
 type DataParser interface {
 	Parse(datastring string) error
 	ActionInfo() (string, error)
 }
 
-// Info принимает слайс строк и объект, реализующий интерфейс DataParser.
+// Info — обрабатываем все строки из dataset
 func Info(dataset []string, dp DataParser) {
 	for _, data := range dataset {
 		err := dp.Parse(data)
